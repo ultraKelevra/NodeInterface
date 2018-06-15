@@ -1,0 +1,412 @@
+/*GLOBAL TRANSITIONS*/
+
+.fade-enter,
+.fade-enter .replica {
+  opacity: 0;
+}
+
+.fade-enter-active,
+.fade-enter-active .replica {
+  animation-name: fade-in;
+  animation-duration: .2s;
+  animation-timing-function: ease-out;
+}
+
+.fade-leave,
+.fade-enter .replica {
+  opacity: 1;
+}
+
+.fade-leave-active,
+.fade-leave-active .replica {
+  animation-name: fade-out;
+  animation-duration: .2s;
+  animation-timing-function: ease-out;
+}
+
+.zoom-out-enter,
+.zoom-out-enter .replica {
+  transform: scale(0.9);
+  opacity: 0;
+}
+
+.zoom-out-enter-active,
+.zoom-out-enter-active .replica {
+  animation-name: zoom-out-mid, fade-in;
+  animation-duration: .2s;
+  animation-timing-function: ease-out;
+}
+
+.zoom-out-leave,
+.zoom-out-leave .replica {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.zoom-out-leave-active,
+.zoom-out-leave-active .replica {
+  animation-name: mid-zoom-out, fade-out;
+  animation-duration: .2s;
+  animation-timing-function: ease-out;
+}
+
+.zoom-in-enter,
+.zoom-in-enter .replica {
+  transform: scale(1.1);
+  opacity: 0;
+}
+
+.zoom-in-enter-active,
+.zoom-in-enter-active .replica {
+  animation-name: zoom-in-mid, fade-in;
+  animation-duration: .2s;
+  animation-timing-function: ease-out;
+}
+
+.zoom-in-leave,
+.zoom-in-leave .replica {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.zoom-in-leave-active,
+.zoom-in-leave-active .replica {
+  animation-name: mid-zoom-in, fade-out;
+  animation-duration: .2s;
+  animation-timing-function: ease-out;
+}
+
+.top-enter,
+.top-enter .replica {
+  transform: translateY(-25%);
+  opacity: 0;
+}
+
+.top-enter-active,
+.top-enter-active .replica {
+  animation-name: top-mid, fade-in;
+  animation-duration: .2s;
+  animation-timing-function: ease-out;
+}
+
+.top-leave,
+.top-leave .replica {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.top-leave-active,
+.top-leave-active .replica {
+  animation-name: mid-top, fade-out;
+  animation-duration: .2s;
+  animation-timing-function: ease-out;
+}
+
+/*from/to bottom*/
+
+.bottom-enter,
+.bottom-enter .replica {
+  transform: translateY(25%);
+  opacity: 0;
+}
+
+.bottom-enter-active,
+.bottom-enter-active .replica {
+  animation-name: bottom-mid, fade-in;
+  animation-duration: .2s;
+  animation-timing-function: ease-out;
+}
+
+.bottom-leave,
+.bottom-leave .replica {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.bottom-leave-active,
+.bottom-leave-active .replica {
+  animation-name: mid-bottom, fade-out;
+  animation-duration: .2s;
+  animation-timing-function: ease-out;
+}
+
+/*from/to right*/
+.right-enter,
+.right-enter .replica {
+  transform: translateX(25%);
+  opacity: 0;
+}
+
+.right-enter-active,
+.right-enter-active .replica {
+  animation-name: right-mid, fade-in;
+  animation-duration: .2s;
+  animation-timing-function: ease-out;
+}
+
+.right-leave,
+.right-leave .replica {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.right-leave-active,
+.right-leave-active .replica {
+  animation-name: mid-right, fade-out;
+  animation-duration: .2s;
+  animation-timing-function: ease-out;
+}
+
+/*from/to left*/
+.left-enter,
+.left-enter .replica {
+  transform: translateX(-25%);
+  opacity: 0;
+}
+
+.left-enter-active,
+.left-enter-active .replica {
+  animation-name: left-mid, fade-in;
+  animation-duration: .2s;
+  animation-timing-function: ease-out;
+}
+
+.left-leave,
+.left-leave .replica {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.left-leave-active,
+.left-leave-active .replica {
+  animation-name: mid-left, fade-out;
+  animation-duration: .2s;
+  animation-timing-function: ease-out;
+}
+
+/*offsets*/
+.delay-0-1 {
+  animation-delay: 0.1s;
+  animation-fill-mode: both;
+}
+
+.delay-0-2 {
+  animation-delay: 0.2s;
+  animation-fill-mode: both;
+}
+
+.delay-0-25 {
+  animation-delay: 0.25s;
+  animation-fill-mode: both;
+}
+
+.delay-0-30 {
+  animation-delay: 0.3s;
+  animation-fill-mode: both;
+}
+
+.delay-0-4 {
+  animation-delay: 0.4s;
+  animation-fill-mode: both;
+}
+
+.delay-0-5 {
+  animation-delay: 0.5s;
+  animation-fill-mode: both;
+}
+
+.delay-0-6 {
+  animation-delay: 0.6s;
+  animation-fill-mode: both;
+}
+
+.delay-0-7 {
+  animation-delay: 0.7s;
+  animation-fill-mode: both;
+}
+
+.delay-0-75 {
+  animation-delay: 0.75s;
+  animation-fill-mode: both;
+}
+
+.delay-0-8 {
+  animation-delay: 0.8s;
+  animation-fill-mode: both;
+}
+
+.delay-0-9 {
+  animation-delay: 0.9s;
+  animation-fill-mode: both;
+}
+
+.delay-1-0 {
+  animation-delay: 1s;
+  animation-fill-mode: both;
+}
+
+.delay-1-25 {
+  animation-delay: 1.25s;
+  animation-fill-mode: both;
+}
+
+.delay-1-5 {
+  animation-delay: 1.5s;
+  animation-fill-mode: both;
+}
+
+.delay-1-75 {
+  animation-delay: 1.5s;
+  animation-fill-mode: both;
+}
+
+.delay-2-0 {
+  animation-delay: 1.5s;
+  animation-fill-mode: both;
+}
+
+/*keyframes*/
+
+@keyframes zoom-in-mid {
+  from {
+    transform: scale(1.1);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+@keyframes mid-zoom-in {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes zoom-out-mid {
+  from {
+    transform: scale(0.9);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+@keyframes mid-zoom-out {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(0.9);
+  }
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes bottom-mid {
+  from {
+    transform: translateY(2vmin);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes mid-bottom {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(2vmin);
+  }
+}
+
+@keyframes mid-top {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-2vmin);
+  }
+}
+
+@keyframes top-mid {
+  from {
+    transform: translateY(-2vmin);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes mid-right {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateX(2vmin);
+  }
+}
+
+@keyframes right-mid {
+  from {
+    transform: translateX(2vmin);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes mid-left {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateX(-2vmin);
+  }
+}
+
+@keyframes left-mid {
+  from {
+    transform: translateX(-2vmin);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes fade-to-25 {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: .25;
+  }
+}
+
+@keyframes fade-from-25 {
+  from {
+    opacity: .25;
+  }
+  to {
+    opacity: 0;
+  }
+}
