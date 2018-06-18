@@ -18,7 +18,7 @@
     props: {'type': {default: 'default'}, 'material': {default: 'solid'}, 'text': {default: 'normal'}},
     methods: {
       OnClick(event) {
-        this.$emit('btnClick', event);
+        this.$emit('click', event);
       }
     }
   }

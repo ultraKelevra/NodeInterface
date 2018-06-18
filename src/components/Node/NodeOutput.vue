@@ -1,62 +1,64 @@
 <template>
   <li class="node-output"
-      :class="{connected:connected}"
-      @click="OnClick"
+      @click.stop="OnClick"
       @mouseenter="OnMouseEnter"
       @mouseleave="OnMouseLeave">
     <span>{{ label }}</span>
-    <!--<span>{{ connectedInputs.length }}</span>-->
-    <!--<id-tag>{{ id }}</id-tag>-->
     <dot></dot>
   </li>
 </template>
 
 <script>
-  import IdTag from '../Misc/IdTag'
-  import Dot from '../Misc/Dot'
+
+  import {bus} from '../../main';
+  import IdTag from '../Misc/IdTag';
+  import Dot from '../Misc/Dot';
 
   export default {
-    props: ['label'],
+    props: ['output'],
     data() {
       return {
-        connectedInputs: [],
-        grabPosition: {
+        dragPosition: {
           x: 0,
           y: 0
         },
       };
     },
-    methods: {
-      OnClick(event) {
-        event.output = this;
-        this.$emit('clickOutput', event);
-      },
-      OnMouseEnter(event) {
-        event.output = this;
-        this.$emit('mouseenterOutput', event);
-      },
-      OnMouseLeave(event) {
-        event.output = this;
-        this.$emit('mouseleaveOutput', event);
-      },
-      CalculateGrabPosition() {
-        let boundRect = this.$el.getBoundingClientRect();
-        this.grabPosition.x = boundRect.left + boundRect.width - 10.0;
-        this.grabPosition.y = (boundRect.top + (boundRect.height / 2.0));
-      }
-    },
     computed: {
-      connected() {
-        return this.connectedInputs.length > 0;
+      id() {
+        return this.output.id;
+      },
+      label() {
+        return this.output.label;
       }
     },
+    methods: {
+      OnClick() {
+        bus.$emit('outputClick', this);
+      }
+      ,
+      OnMouseEnter() {
+        bus.$emit('outputEnter', this);
+      }
+      ,
+      OnMouseLeave() {
+        bus.$emit('outputLeave', this);
+      }
+      ,
+      CalculateConnectionDrawPosition() {
+        let boundRect = this.$el.getBoundingClientRect();
+        this.dragPosition.x = boundRect.left + boundRect.width - 10.0;
+        this.dragPosition.y = (boundRect.top + (boundRect.height / 2.0));
+      }
+    }
+    ,
     components: {
       IdTag,
       Dot
-    },
-    //hooks
+    }
+    ,
     mounted() {
-      this.CalculateGrabPosition();
+      this.CalculateConnectionDrawPosition();
       this.$parent.$data.outputList.push(this);
     }
   }

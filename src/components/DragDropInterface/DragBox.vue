@@ -1,224 +1,167 @@
 <template>
   <div class="drag-box"
-       @mousemove="OnMouseMove"
-       @click="Deselect">
+       @mousemove="UpdateMousePosition">
     <draw-box :connections="connections">
     </draw-box>
-    <node v-for="(node,index) in nodes"
-          :label="node.label"
-          :inputs="node.inputs"
-          :outputs="node.outputs"
-          @dragUpdate.stop="OnDragUpdate"
-          @clickInput.stop="OnClickInput"
-          @mouseenterInput.stop="OnMouseEnterInput"
-          @mouseleaveInput.stop="OnMouseLeaveInput"
-          @clickOutput.stop="OnClickOutput"
-          @mouseenterOutput.stop="OnMouseEnterOutput"
-          @mouseleaveOutput.stop="OnMouseLeaveOutput"
-          @deleteNode="OnDeleteNode($event,index)"
-          @disconnect="Disconnect"
-          :key="node.id">
+    <node-picker></node-picker>
+    <node v-for="node in nodeTree"
+          :node="node"
+          :mousePosition="mousePosition">
     </node>
-    <node-picker :nodeLabels="nodeLabels"
-                 @createNode="CreateNode">
-    </node-picker>
   </div>
 </template>
 
 <script>
+  import {mapGetters} from 'vuex';
+  import {bus} from '../../main';
   import Node from '../Node/Node.vue';
-  import DrawBox from '../DrawBox/DrawBox';
+  import DrawBox from './ConnectionsDrawBox';
   import NodePicker from './NodePicker';
 
   export default {
-    props: ['nodeLabels'],
     data() {
       return {
-        //nodeGeneration
-        nodes: [],
-        nextNodeId: 0,
-        nodeReferences: [],
-        //draggingNode nodes
-        nodeInitialOffset: {x: 0, y: 0},
-        draggingNode: false,
-        draggedNode: null,
-        //draggingInputs/Outputs
+        mousePosition: {x: 0, y: 0},
+
+        //visual connections
+        inPreview: false,
+        connections: [],
         draggingInput: false,
         draggingOutput: false,
-        draggedElement: null,
-        draggedElementNode: null,
-        //connections
-        connections: [],
-        hotConnection: {start: null, end: null, input: null, output: null},
-        hotPosition: {x: 0, y: 0},
-      }
-        ;
+        hotConnection: {
+          input: null,
+          output: null,
+          inputObj: null,
+          outputObj: null
+        },
+      };
+    },
+    computed: {
+      ...mapGetters(['nodeTree']),
     },
     methods: {
-      //NodePicker
-      CreateNode(code) {
-        let newNode = {
-          code: code,
-          label: 'code',
-          id: this.nextNodeId,
-          inputs: [{label: 'A'}, {label: 'B'}, {label: 'C'}],
-          outputs:
-            [{label: 'out'}],
-        };
-        this.nextNodeId++;
-        this.nodes.push(newNode);
+      UpdateMousePosition(event) {
+        this.mousePosition.x = event.pageX;
+        this.mousePosition.y = event.pageY;
       },
-      //Node
-      OnDeleteNode(node, index) {
-        this.connections = this.connections.filter((elem) => {
-          return elem.input.$parent !== node && elem.output.$parent !== node;
-        });
-        this.nodes.splice(index, 1);
-      },
-      Deselect() {
-        this.DropNode();
-        this.DropInputOutput();
-      },
-      OnMouseMove(event) {
-        if (this.draggingNode) {
-          let posX = event.clientX - this.nodeInitialOffset.x;
-          let posY = event.clientY - this.nodeInitialOffset.y;
-
-          if (posX < 0)
-            posX = 0;
-          if (posY < 0)
-            posY = 0;
-
-          this.draggedNode.offset.x = posX;
-          this.draggedNode.offset.y = posY;
-          this.draggedNode.CalculateChildrenPosition();
-        }
-        this.hotPosition.x = event.x;
-        this.hotPosition.y = event.y;
-      },
-      OnDragUpdate(event) {
-        if (this.draggingNode) {
-          if (this.draggedNode === event.node)
-            this.DropNode();
-        }
-        else if (!this.draggingOutput && !this.draggingInput)
-          this.GrabNode(event);
-      },
-      GrabNode(event) {
-        this.draggingNode = true;
-        this.draggedNode = event.node;
-        let boundRect = event.node.$el.getBoundingClientRect();
-        this.nodeInitialOffset.x = event.x - boundRect.left;
-        this.nodeInitialOffset.y = event.y - boundRect.top;
-        this.draggedNode.dragged = true;
-      },
-      DropNode() {
-        if (this.draggingNode) {
-          this.draggingNode = false;
-          this.draggedNode.$data.dragged = false;
-          this.draggedNode.CalculateChildrenPosition();
-        }
-      },
-      //Input/Output
-      OnClickInput(event) {
-        if (!this.draggingNode) {
-          if (this.draggingOutput)
-            this.Connect(event.input, this.draggedElement);
-          else if (!this.draggingInput)
-            this.DragInput(event.input);
-        }
-      },
-      OnMouseEnterInput(event) {
-        if (this.draggingOutput)
-          this.Visualize(event.input, this.draggedElement);
-      },
-      OnMouseLeaveInput(event) {
-        if (this.draggingOutput)
-          this.Unvisualize(event.input, this.draggedElement);
-      },
-      OnClickOutput(event) {
-        if (!this.draggingNode) {
-          if (this.draggingInput)
-            this.Connect(this.draggedElement, event.output);
-          else if (!this.draggingOutput)
-            this.DragOutput(event.output);
-        }
-      },
-      OnMouseEnterOutput(event) {
-        if (this.draggingInput)
-          this.Visualize(this.draggedElement, event.output);
-      },
-      OnMouseLeaveOutput(event) {
-        if (this.draggingInput)
-          this.Unvisualize(this.draggedElement, event.output);
-      },
-      //actions
+      //visual
       DragInput(input) {
-        this.draggingInput = true;
-        this.draggedElement = input;
-        this.hotConnection.start = this.hotPosition;
-        this.hotConnection.end = input.grabPosition;
+        this.hotConnection.output = this.mousePosition;
+        this.hotConnection.input = input.dragPosition;
+        this.hotConnection.inputObj = input.$props.input;
         this.connections.push(this.hotConnection);
+        this.draggingInput = true;
       },
       DragOutput(output) {
         this.draggingOutput = true;
-        this.draggedElement = output;
-        this.hotConnection.start = output.grabPosition;
-        this.hotConnection.end = this.hotPosition;
+        this.hotConnection.output = output.dragPosition;
+        this.hotConnection.input = this.mousePosition;
+        this.hotConnection.outputObj = output.$props.output;
         this.connections.push(this.hotConnection);
       },
-      DropInputOutput() {
-        this.hotConnection = {start: null, end: null};
-        if (this.draggingInput || this.draggingOutput) {
-          this.draggingInput = false;
+      Drop() {
+        if (this.draggingOutput || this.draggingInput) {
           this.draggingOutput = false;
+          this.draggingInput = false;
           this.connections.pop();
-          //this.hotConnection = {start: null, end: null};
         }
       },
-      Visualize(input, output) {
-        console.log('visualize');
+      Preview(elem) {
+        this.inPreview = true;
         if (this.draggingInput) {
-          this.hotConnection.start = output.grabPosition;
-        } else
-          this.hotConnection.end = input.grabPosition;
+          this.hotConnection.output = elem.dragPosition;
+          this.hotConnection.outputObj = elem.$props.output;
+        }
+        else {
+          this.hotConnection.input = elem.dragPosition;
+          this.hotConnection.inputObj = elem.$props.input;
+        }
       },
-      Unvisualize() {
+      Unpreview() {
+        this.inPreview = false;
         if (this.draggingInput)
-          this.hotConnection.start = this.hotPosition;
-        else
-          this.hotConnection.end = this.hotPosition;
+          this.hotConnection.output = this.mousePosition;
+        else this.hotConnection.input = this.mousePosition;
       },
-      Connect(input, output) {
-        input.$data.connectedOutput = output;
-        output.$data.connectedInputs.push(input);
-        input.$data.connected = true;
+      Connect() {
+        this.$store.dispatch('connect', {
+          input: this.hotConnection.inputObj,
+          output: this.hotConnection.outputObj
+        });
+        this.inPreview = false;
         this.draggingInput = false;
         this.draggingOutput = false;
-        this.hotConnection.input = input;
-        this.hotConnection.output = output;
-        this.hotConnection = {start: null, end: null};
+        this.hotConnection = {
+          input: null,
+          output: null,
+          inputObj: null,
+          outputObj: null
+        };
       },
       Disconnect(input) {
-        for (let i = 0; i < this.connections.length; i++) {
-          if (this.connections[i].input === input) {
-            this.connections.splice(i, 1);
-            break;
+        this.$store.dispatch('disconnect', input.$props.input);
+        let self = this;
+        this.connections.map((obj, index) => {
+          if (obj.inputObj === input.$props.input) {
+            self.connections.splice(index, 1);
+            return true;
           }
-        }
-      }
+        });
+      },
+      DeleteNode(node) {
+        this.connections.filter(connection=>{
+        });
+        this.$store.dispatch('deleteNode', node.$props.node);
+      },
     },
     components: {
       Node,
       DrawBox,
-      NodePicker
+      NodePicker,
+    },
+    mounted() {
+      bus.$on('inputClick', input => {
+        if (this.draggingOutput)
+          this.Connect();
+        else if (!this.draggingInput)
+          this.DragInput(input);
+      });
+      bus.$on('inputEnter', input => {
+        if (this.draggingOutput)
+          this.Preview(input);
+      });
+      bus.$on('inputLeave', input => {
+        if (this.inPreview && this.draggingOutput)
+          this.Unpreview();
+      });
+      bus.$on('outputClick', output => {
+        if (this.draggingInput)
+          this.Connect();
+        else if (!this.draggingOutput)
+          this.DragOutput(output);
+      });
+      bus.$on('outputEnter', output => {
+        if (this.draggingInput)
+          this.Preview(output);
+      });
+      bus.$on('outputLeave', output => {
+        if (this.inPreview && this.draggingInput)
+          this.Unpreview();
+      });
+      bus.$on('inputDisconnect', input => {
+        this.Disconnect(input);
+      });
+      bus.$on('deleteNode', node => {
+        this.DeleteNode(node);
+      });
     }
   }
 </script>
 
 <style>
   .drag-box {
-    width: 100vw;
+    position: absolute;
+    width: 100vh;
     height: 100vh;
   }
 </style>
