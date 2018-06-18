@@ -6,7 +6,8 @@
     <node-picker></node-picker>
     <node v-for="node in nodeTree"
           :node="node"
-          :mousePosition="mousePosition">
+          :mousePosition="mousePosition"
+          :key="node.id">
     </node>
   </div>
 </template>
@@ -109,7 +110,8 @@
         });
       },
       DeleteNode(node) {
-        this.connections.filter(connection=>{
+        this.connections = this.connections.filter(connection => {
+          return connection.inputObj.node !== node.$props.node && connection.outputObj.node !== node.$props.node;
         });
         this.$store.dispatch('deleteNode', node.$props.node);
       },

@@ -6,7 +6,7 @@
       <div class="node-bar draggable-area"
            @click.stop="DragDrop">
         <span>{{ label }}</span>
-        <span>{{ dragged }}</span>
+        <span style="font-size: 20px; color: gray;">{{ id }}</span>
         <styl-button material="transparent"
                      @click.stop="Delete">
           <icon-close></icon-close>

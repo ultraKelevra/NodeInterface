@@ -52,6 +52,15 @@ const mutations = {
     state.inputs.push(newInput);
     return newInput;
   },
+  deleteInput(state, input) {
+    mutations.disconnect(state, input);
+    state.inputs.find((i, index) => {
+      if (input === i) {
+        state.inputs.splice(index, 1);
+        return true;
+      }
+    });
+  },
   createOutput(state, blueprint) {
     let newOutput = {
       id: mutations.getOutputId(state),
@@ -61,6 +70,17 @@ const mutations = {
     };
     state.outputs.push(newOutput);
     return newOutput;
+  },
+  deleteOutput(state, output) {
+    output.connectedInputs.map(input => {
+      mutations.disconnect(state, input);
+    });
+    state.outputs.find((o, index) => {
+      if (output === o) {
+        state.outputs.splice(index, 1);
+        return true;
+      }
+    });
   },
   createNode(state, blueprint) {
     let newNode = {};
@@ -84,9 +104,13 @@ const mutations = {
   },
   deleteNode(state, node) {
     node.inputs.map(input => {
-      mutations.disconnect(state, input);
+      mutations.deleteInput(state, input);
     });
-    state.node.splice(state.node.indexOf(node));
+    node.outputs.map(output => {
+      mutations.deleteOutput(state, output);
+    });
+    state.nodes.splice(state.nodes.indexOf(node), 1);
+    console.log(state);
   },
   connect(state, {input, output}) {
     input.connectedOutput = output;
@@ -95,16 +119,13 @@ const mutations = {
     state.connections.push({input: input, output: output});
   },
   disconnect(state, input) {
-    let output = input.connectedOutput;
-    input.connected = false;
-    input.connectedOutput = null;
-    state.connections.find((connection, index) => {
-      if (connection.input === input) {
-        state.connections.splice(index, 1);
-        return true;
-      }
-    });
-    output.connectedInputs.splice(output.connectedInputs.indexOf(input), 1);
+    if (input.connected) {
+      let output = input.connectedOutput;
+      input.connected = false;
+      input.connectedOutput = null;
+      state.connections.splice(state.connections.indexOf(input), 1);
+      output.connectedInputs.splice(output.connectedInputs.indexOf(input), 1);
+    }
   },
 };
 
