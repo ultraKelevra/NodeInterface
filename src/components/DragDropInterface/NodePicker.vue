@@ -2,20 +2,21 @@
   <div class="node-picker"
        :class="{unfolded:unfolded}">
     <styl-button material="transparent"
-                 @btnClick.stop="unfolded=true">
+                 @click.stop="unfolded=true">
       <icon-burger></icon-burger>
     </styl-button>
     <div class="picker-body">
       <div style="position: absolute; right: 0; top: 0;">
         <styl-button material="transparent"
-                     @btnClick.stop="unfolded=false">
+                     @click.stop="unfolded=false">
           <icon-close></icon-close>
         </styl-button>
       </div>
       <styl-button v-for="(label,index) in nodeLabels"
-                   @btnClick.stop="OnButtonClick(label.code)"
+                   @click.stop="OnButtonClick()"
                    :key="index">
-        {{ label.label }}
+        {{ label }}
+        {{index}}
       </styl-button>
     </div>
   </div>
@@ -26,14 +27,22 @@
   import IconClose from '../Button/IconClose';
   import IconBurger from '../Button/IconBurger';
 
+
   export default {
-    props: ['nodeLabels'],
     data() {
-      return {unfolded: true,}
+      return {
+        nodeLabels: ['A', 'B', 'C'],
+        unfolded: true,
+        node: {
+          label: 'A',
+          inputs: [{label: 'IA'}],
+          outputs: [{label: 'OA'}],
+        },
+      }
     },
     methods: {
-      OnButtonClick(code) {
-        this.$emit('createNode', code);
+      OnButtonClick() {
+        this.$store.dispatch('createNode', this.node);
       }
     },
     components: {

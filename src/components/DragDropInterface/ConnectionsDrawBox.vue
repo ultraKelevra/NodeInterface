@@ -1,5 +1,9 @@
 <template>
-  <svg class="draw-box" height="500vh" width="500vh" viewBox="1000,1000">
+  <svg class="draw-box"
+       height="500vh"
+       width="500vh"
+       viewBox="1000,1000"
+       @click.stop="$emit('drop')">
     <defs>
       <!--<pattern viewBox="0 0 100 100"-->
       <!--x="0" y="0" width="100" height="100"-->
@@ -19,12 +23,13 @@
       <!--</pattern>-->
     </defs>
     <!--<rect x="0" y="0" width="100%" height="100%" fill="url(#cross-fill)"></rect>-->
-    <cubic-bezier v-for="connection in connections"
-                  :start="connection.start"
-                  :end="connection.end"
+    <cubic-bezier v-for="(connection,index) in connections"
+                  :start="connection.output"
+                  :end="connection.input"
                   fill="none"
                   stroke="skyblue"
-                  strokeWidth="3">
+                  strokeWidth="3"
+                  :key="index">
     </cubic-bezier>
   </svg>
 </template>

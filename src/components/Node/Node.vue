@@ -4,41 +4,27 @@
          :class="{dragged:dragged}"
          :style="{left: offset.x+'px', top: offset.y+'px'}">
       <div class="node-bar draggable-area"
-           @click="OnClick">
+           @click.stop="DragDrop">
         <span>{{ label }}</span>
+        <span>{{ dragged }}</span>
         <styl-button material="transparent"
-                     @btnClick.stop="OnDeleteNode">
+                     @click.stop="Delete">
           <icon-close></icon-close>
         </styl-button>
       </div>
       <div class="node-body">
         <div class="node-output-area">
           <ul>
-            <node-output v-for="output in outputs"
-                         :id="output.id"
-                         :label="output.label"
-                         @clickOutput="OnClickOutput"
-                         @mouseenterOutput="OnMouseEnterOutput"
-                         @mouseleaveOutput="OnMouseLeaveOutput"
+            <node-output v-for="output in node.outputs"
+                         :output="output"
                          :key="output.id">
             </node-output>
           </ul>
         </div>
-        <!--<div class="node-form-area">-->
-          <!--<form action="">-->
-            <!--<input type="text">-->
-          <!--</form>-->
-          <!--balaclava-->
-        <!--</div>-->
         <div class="node-input-area">
           <ul>
-            <node-input v-for="input in inputs"
-                        :id="input.id"
-                        :label="input.label"
-                        @clickInput="OnClickInput"
-                        @mouseenterInput="OnMouseEnterInput"
-                        @mouseleaveInput="OnMouseLeaveInput"
-                        @disconnect="$emit('disconnect',$event)"
+            <node-input v-for="input in node.inputs"
+                        :input="input"
                         :key="input.id">
             </node-input>
           </ul>
@@ -49,6 +35,7 @@
 </template>
 
 <script>
+  import {bus} from '../../main';
   import NodeInput from './NodeInput';
   import NodeOutput from './NodeOutput';
   import StylButton from '../Button/StylButton';
@@ -57,70 +44,59 @@
   import IconClose from '../Button/IconClose';
 
   export default {
-    props: ['label', 'inputs', 'outputs'],
+    props: ['node', 'mousePosition'],
     data() {
       return {
         inputList: [],
         outputList: [],
-        offset: {x: 0, y: 0},
+        dragOffset: {x: 0, y: 0},
+        offset: {x: 150, y: 150},
         dragged: false
       };
     },
+    computed: {
+      id() {
+        return this.node.id;
+      },
+      label() {
+        return this.node.label;
+      }
+    },
     methods: {
-      OnClick(event) {
-        event.node = this;
-        this.$emit('dragUpdate', event);
+      DragDrop(event) {
+        let rect = this.$el.getBoundingClientRect();
+        this.dragOffset.x = event.x - rect.left;
+        this.dragOffset.y = event.y - rect.top;
+        if (this.dragged) this.Drop();
+        else
+          this.Drag();
       },
-      OnClickInput(event) {
-        event.node = this;
-        this.$emit('clickInput', event);
+      Drag() {
+        this.dragged = true;
+        this.UpdateNodePosition();
       },
-      OnMouseEnterInput(event) {
-        event.node = this;
-        this.$emit('mouseenterInput', event);
+      Drop() {
+        this.dragged = false;
+        this.UpdateNodePosition();
       },
-      OnMouseLeaveInput(event) {
-        event.node = this;
-        this.$emit('mouseleaveInput', event);
+      Delete() {
+        bus.$emit('deleteNode', this)
       },
-      OnClickOutput(event) {
-        event.node = this;
-        this.$emit('clickOutput', event);
+      UpdateNodePosition() {
+        this.offset.x = this.mousePosition.x - this.dragOffset.x;
+        this.offset.y = this.mousePosition.y - this.dragOffset.y;
+        this.CalculateChildrenPositions();
+        if (this.dragged)
+          window.requestAnimationFrame(this.UpdateNodePosition);
       },
-      OnMouseEnterOutput(event) {
-        event.node = this;
-        this.$emit('mouseenterOutput', event);
-      },
-      OnMouseLeaveOutput(event) {
-        event.node = this;
-        this.$emit('mouseleaveOutput', event);
-      },
-      OnDeleteNode() {
-        this.inputList.map((input) => {
-          if (input.connected) {
-            let output = input.connectedOutput;
-            output.connectedInputs = output.connectedInputs.filter((connectedInput) => {
-              return connectedInput != input;
-            });
-          }
-        });
-        this.outputList.map((output) => {
-          if (output.connectedInputs.length > 0)
-            output.connectedInputs.map((connectedInput) => {
-              connectedInput.connectedOutput = null;
-              connectedInput.connected = false;
-            });
-        });
-        this.$emit('deleteNode', this);
-      },
-      CalculateChildrenPosition() {
+      CalculateChildrenPositions() {
         this.inputList.map((elem) => {
-          elem.CalculateGrabPosition();
+          elem.CalculateConnectionDrawPosition();
         });
         this.outputList.map((elem) => {
-          elem.CalculateGrabPosition();
+          elem.CalculateConnectionDrawPosition();
         });
-      }
+      },
     },
     components: {
       NodeInput,
@@ -131,11 +107,9 @@
       IconClose
     },
     mounted() {
-      let position = this.$parent.$data.hotPosition;
-      this.$el.style.left = (position.x - 15) + 'px';
-      this.$el.style.top = (position.y - 15) + 'px';
-      this.$parent.nodeReferences.push(this);
-      this.$parent.GrabNode({node: this, x: position.x, y: position.y});
+      this.dragOffset.x = 15;
+      this.dragOffset.y = 10;
+      this.Drag();
     }
   }
 </script>
@@ -146,8 +120,6 @@
     min-width: 100px;
     display: block;
     position: absolute;
-    top: 50px;
-    left: 30px;
     box-shadow: 0 2px 5px 0 rgba(0, 0, 0, .2);
     transition: box-shadow .2s, transform .2s;
     transform: scale(1);
@@ -181,7 +153,7 @@
   }
 
   .node-output-area ul,
-  .node-input-area ul{
+  .node-input-area ul {
     display: flex;
     flex-direction: column;
   }

@@ -1,7 +1,6 @@
 <template>
   <div id="app">
-    <drag-box :nodeLabels="nodeLabels">
-    </drag-box>
+    <drag-box></drag-box>
   </div>
 </template>
 
@@ -10,43 +9,6 @@
   import NodePicker from './components/DragDropInterface/NodePicker';
 
   export default {
-    data() {
-      return {
-        nodeInstances: [],
-        nodeLabels: [
-          {code: 'merge', label: 'Combinar'},
-          {code: 'split', label: 'Separar'},
-          {code: 'crosstable', label: 'Frecuencias'}
-        ],
-        nodesBlueprint: [
-          {
-            code: 'merge',
-            blueprint: {
-              label: 'Combinar',
-              inputs: [{name: 'A'}, {name: 'B'}, {name: 'C'}],
-              outputs: [{name: 'out'}],
-            }
-          },
-          {
-            code: 'split',
-            blueprint: {
-              label: 'Separar',
-              inputs: [{name: 'A'}, {name: 'B'}, {name: 'C'}],
-              outputs: [{name: 'out'}],
-            }
-          },
-          {
-            code: 'crosstable',
-            blueprint: {
-              label: 'Frecuencias',
-              inputs: [{name: 'A'}, {name: 'B'}, {name: 'C'}],
-              outputs: [{name: 'out'}],
-            }
-          }
-        ],
-      }
-    },
-    methods: {},
     components: {
       DragBox,
       NodePicker
