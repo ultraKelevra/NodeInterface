@@ -4,7 +4,7 @@
 
 <script>
   export default {
-    props:['connected','type']
+    props: ['connected', 'type']
   }
 </script>
 
@@ -19,6 +19,13 @@
     background: transparent;
     border-radius: 50%;
     border: 3px skyblue solid;
+    transition: .25s;
+  }
+
+  .connected .dot {
+    width: 0;
+    height: 0;
+    border: 5px skyblue solid;
   }
 
   .node-input .dot {

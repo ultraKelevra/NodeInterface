@@ -5,13 +5,12 @@
       @mouseenter="OnMouseEnter"
       @mouseleave="OnMouseLeave">
     <span>{{ label }}</span>
-    <span>{{ id }}</span>
     <dot></dot>
     <transition name="right" appear>
       <div v-if="showScissors"
            class="input-connection-cut-icon"
            @click.stop="Disconnect">
-        <icon-scisors></icon-scisors>
+        <icon-scisors class="small"></icon-scisors>
       </div>
     </transition>
   </li>
@@ -20,8 +19,8 @@
 <script>
   import {bus} from '../../main';
   import IdTag from '../Misc/IdTag';
-  import StylButton from '../Button/StylButton';
-  import IconScissors from '../Button/IconScissors';
+  import StylButton from '../Form/Btn';
+  import IconScissors from '../Form/IconScissors';
   import Dot from '../Misc/Dot'
 
   export default {
@@ -71,6 +70,8 @@
       },
       CalculateConnectionDrawPosition() {
         let boundRect = this.$el.getBoundingClientRect();
+        boundRect.x += window.scrollX;
+        boundRect.y += window.scrollY;
         this.dragPosition.x = boundRect.left + 10.0;
         this.dragPosition.y = (boundRect.top + (boundRect.height / 2.0));
       }

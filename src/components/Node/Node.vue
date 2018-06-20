@@ -1,16 +1,16 @@
 <template>
   <transition name="fade" appear>
     <div class="node"
+         :id="'node-'+node.id"
          :class="{dragged:dragged}"
          :style="{left: offset.x+'px', top: offset.y+'px'}">
       <div class="node-bar draggable-area"
            @click.stop="DragDrop">
         <span>{{ label }}</span>
-        <span style="font-size: 20px; color: gray;">{{ id }}</span>
-        <styl-button material="transparent"
-                     @click.stop="Delete">
-          <icon-close></icon-close>
-        </styl-button>
+        <btn material="transparent"
+             @click.stop="Delete">
+          <icon-close class="small"></icon-close>
+        </btn>
       </div>
       <div class="node-body">
         <div class="node-output-area">
@@ -21,6 +21,12 @@
             </node-output>
           </ul>
         </div>
+
+        <div class="node-form-area">
+          <frm :blueprint="node.form"
+               :formId="node.id"></frm>
+        </div>
+
         <div class="node-input-area">
           <ul>
             <node-input v-for="input in node.inputs"
@@ -38,10 +44,10 @@
   import {bus} from '../../main';
   import NodeInput from './NodeInput';
   import NodeOutput from './NodeOutput';
-  import StylButton from '../Button/StylButton';
-  import StylForm from '../Form/StylForm';
+  import Btn from '../Form/Btn';
   import Spiner from '../Misc/Spiner';
-  import IconClose from '../Button/IconClose';
+  import IconClose from '../Form/IconClose';
+  import Frm from '../Form/Frm';
 
   export default {
     props: ['node', 'mousePosition'],
@@ -101,10 +107,10 @@
     components: {
       NodeInput,
       NodeOutput,
-      StylButton,
-      StylForm,
+      btn: Btn,
       Spiner,
-      IconClose
+      IconClose,
+      frm: Frm
     },
     mounted() {
       this.dragOffset.x = 15;
@@ -177,4 +183,17 @@
     box-shadow: inset 1px 1px 2px rgba(0, 0, 0, .2);
   }
 
+  input:required {
+    border: 1px red;
+  }
+
+  label {
+    font-size: 17px;
+  }
+
+  fieldset {
+    border-radius: 3px;
+    border: 1px solid lightgray;
+    padding: 5px;
+  }
 </style>

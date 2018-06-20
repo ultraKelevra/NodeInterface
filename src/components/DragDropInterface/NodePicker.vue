@@ -9,23 +9,22 @@
       <div style="position: absolute; right: 0; top: 0;">
         <styl-button material="transparent"
                      @click.stop="unfolded=false">
-          <icon-close></icon-close>
+          <icon-close class="small"></icon-close>
         </styl-button>
       </div>
       <styl-button v-for="(label,index) in nodeLabels"
                    @click.stop="OnButtonClick()"
                    :key="index">
         {{ label }}
-        {{index}}
       </styl-button>
     </div>
   </div>
 </template>
 
 <script>
-  import StylButton from '../Button/StylButton';
-  import IconClose from '../Button/IconClose';
-  import IconBurger from '../Button/IconBurger';
+  import StylButton from '../Form/Btn';
+  import IconClose from '../Form/IconClose';
+  import IconBurger from '../Form/IconBurger';
 
 
   export default {
@@ -35,6 +34,20 @@
         unfolded: true,
         node: {
           label: 'A',
+          form: [
+            {
+              type: 'Text',
+              label: 'txtLabel'
+            },
+            {
+              type: 'Num',
+              label: 'numLabel'
+            },
+            {
+              type: 'Slct',
+              label: 'numLabel'
+            }
+          ],
           inputs: [{label: 'IA'}],
           outputs: [{label: 'OA'}],
         },

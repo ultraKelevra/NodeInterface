@@ -2,15 +2,17 @@ const state = {
   nodeId: 0,
   inputId: 0,
   outputId: 0,
+  formId: 0,
   nodes: [],
   inputs: [],
   outputs: [],
+  forms: [],
   connections: []
 };
 
 //getters receive state
 const getters = {
-  nodeTree({nodes}) {
+  nodes({nodes}) {
     return nodes;
   },
   nodeById({nodes}, id) {
@@ -39,6 +41,11 @@ const mutations = {
   getOutputId(state) {
     let newId = state.outputId;
     state.outputId++;
+    return newId;
+  },
+  getFormId(state) {
+    let newId = state.formId;
+    state.formId++;
     return newId;
   },
   createInput(state, blueprint) {
@@ -82,6 +89,26 @@ const mutations = {
       }
     });
   },
+  createForm(state, blueprint) {
+    let newForm = {
+      id: mutations.getFormId(state),
+      label: blueprint.label,
+      type: blueprint.type,
+      data: null,
+      node: null,
+      updated: false
+    };
+    state.forms.push(newForm);
+    return newForm;
+  },
+  deleteForm(state, form) {
+    state.forms.find((f, index) => {
+      if (form === f) {
+        state.forms.splice(index, 1);
+        return true;
+      }
+    });
+  },
   createNode(state, blueprint) {
     let newNode = {};
     let inputs = [];
@@ -96,19 +123,24 @@ const mutations = {
       output.node = newNode;
       outputs.push(output);
     });
+    let form = mutations.createForm(state, blueprint.form);
+    form.node = newNode;
     newNode.label = blueprint.label;
     newNode.inputs = inputs;
     newNode.outputs = outputs;
+    newNode.form = form;
     newNode.id = mutations.getNodeId(state);
     state.nodes.push(newNode);
   },
   deleteNode(state, node) {
+    console.log(node);
     node.inputs.map(input => {
       mutations.deleteInput(state, input);
     });
     node.outputs.map(output => {
       mutations.deleteOutput(state, output);
     });
+    mutations.deleteForm(state, node.form);
     state.nodes.splice(state.nodes.indexOf(node), 1);
     console.log(state);
   },
@@ -127,6 +159,9 @@ const mutations = {
       output.connectedInputs.splice(output.connectedInputs.indexOf(input), 1);
     }
   },
+
+  //FORMS
+
 };
 
 //actions receive context

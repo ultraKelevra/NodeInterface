@@ -1,14 +1,15 @@
 <template>
   <div class="drag-box"
        @mousemove="UpdateMousePosition">
-    <draw-box :connections="connections">
+    <draw-box :connections="connections"
+              @drop="Drop">
     </draw-box>
-    <node-picker></node-picker>
-    <node v-for="node in nodeTree"
+    <node v-for="node in nodes"
           :node="node"
           :mousePosition="mousePosition"
           :key="node.id">
     </node>
+    <node-picker></node-picker>
   </div>
 </template>
 
@@ -38,7 +39,7 @@
       };
     },
     computed: {
-      ...mapGetters(['nodeTree']),
+      ...mapGetters(['nodes']),
     },
     methods: {
       UpdateMousePosition(event) {
@@ -162,8 +163,8 @@
 
 <style>
   .drag-box {
-    position: absolute;
-    width: 100vh;
-    height: 100vh;
+    /*position: absolute;*/
+    /*width: 100vh;*/
+    /*height: 100vh;*/
   }
 </style>
