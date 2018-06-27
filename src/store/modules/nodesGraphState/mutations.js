@@ -1,33 +1,4 @@
-const state = {
-  nodeId: 0,
-  inputId: 0,
-  outputId: 0,
-  formId: 0,
-  nodes: [],
-  inputs: [],
-  outputs: [],
-  forms: [],
-  connections: []
-};
-
-//getters receive state
-const getters = {
-  nodes({nodes}) {
-    return nodes;
-  },
-  nodeById({nodes}, id) {
-    return nodes.find(elem => id === elem.id);
-  },
-  inputById({inputs}, id) {
-    return inputs.find(input => id === input.id);
-  },
-  outputById({outputs}, id) {
-    return outputs.find(output => id === output.id);
-  }
-};
-
-//mutations receive state
-const mutations = {
+export const mutations = {
   getNodeId(state) {
     let newId = state.nodeId;
     state.nodeId++;
@@ -92,12 +63,19 @@ const mutations = {
   createForm(state, blueprint) {
     let newForm = {
       id: mutations.getFormId(state),
-      label: blueprint.label,
-      type: blueprint.type,
-      data: null,
+      elements: [],
       node: null,
-      updated: false
+      updated: false,
     };
+    blueprint.map(elem => {
+      let newElem = {
+        label: elem.label,
+        type: elem.type,
+        data: null,
+        form: newForm
+      };
+      newForm.elements.push(newElem);
+    });
     state.forms.push(newForm);
     return newForm;
   },
@@ -133,7 +111,6 @@ const mutations = {
     state.nodes.push(newNode);
   },
   deleteNode(state, node) {
-    console.log(node);
     node.inputs.map(input => {
       mutations.deleteInput(state, input);
     });
@@ -142,7 +119,6 @@ const mutations = {
     });
     mutations.deleteForm(state, node.form);
     state.nodes.splice(state.nodes.indexOf(node), 1);
-    console.log(state);
   },
   connect(state, {input, output}) {
     input.connectedOutput = output;
@@ -159,30 +135,4 @@ const mutations = {
       output.connectedInputs.splice(output.connectedInputs.indexOf(input), 1);
     }
   },
-
-  //FORMS
-
 };
-
-//actions receive context
-const actions = {
-  createNode({commit}, blueprint) {
-    commit('createNode', blueprint);
-  },
-  deleteNode({commit}, node) {
-    commit('deleteNode', node);
-  },
-  connect({commit}, event) {
-    commit('connect', event);
-  },
-  disconnect({commit}, input) {
-    commit('disconnect', input);
-  },
-};
-
-export default {
-  state,
-  getters,
-  mutations,
-  actions
-}

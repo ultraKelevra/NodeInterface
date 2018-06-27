@@ -13,7 +13,7 @@
         </btn>
       </div>
       <div class="node-body">
-        <div class="node-output-area">
+        <div v-if="node.outputs.length>0" class="node-output-area">
           <ul>
             <node-output v-for="output in node.outputs"
                          :output="output"
@@ -22,12 +22,12 @@
           </ul>
         </div>
 
-        <div class="node-form-area">
-          <frm :blueprint="node.form"
-               :formId="node.id"></frm>
+        <div v-if="node.form.elements.length>0" class="node-form-area">
+          <frm :form="node.form">
+          </frm>
         </div>
 
-        <div class="node-input-area">
+        <div v-if="node.inputs.length>0" class="node-input-area">
           <ul>
             <node-input v-for="input in node.inputs"
                         :input="input"
@@ -171,29 +171,5 @@
   .node-input-area {
     text-align: left;
     padding: 5px 15px 5px 0;
-  }
-
-  /*---------------------------------------------------------------------separar despues*/
-  input {
-    border: none;
-    border-radius: 3px;
-    color: rgb(50, 50, 50);
-    font-size: 15px;
-    padding: 2px 5px;
-    box-shadow: inset 1px 1px 2px rgba(0, 0, 0, .2);
-  }
-
-  input:required {
-    border: 1px red;
-  }
-
-  label {
-    font-size: 17px;
-  }
-
-  fieldset {
-    border-radius: 3px;
-    border: 1px solid lightgray;
-    padding: 5px;
   }
 </style>

@@ -1,6 +1,6 @@
 # node-interface
 
-> Node based interface for visual programming
+> Node based interface for visual programming in Python PANDAS
 
 ## Build Setup
 

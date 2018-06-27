@@ -10,6 +10,8 @@
           :key="node.id">
     </node>
     <node-picker></node-picker>
+    <message-box></message-box>
+    <input type="text" ssss>
   </div>
 </template>
 
@@ -19,6 +21,7 @@
   import Node from '../Node/Node.vue';
   import DrawBox from './ConnectionsDrawBox';
   import NodePicker from './NodePicker';
+  import MessageBox from './MessageBox/MessageBox';
 
   export default {
     data() {
@@ -93,6 +96,7 @@
         this.inPreview = false;
         this.draggingInput = false;
         this.draggingOutput = false;
+        bus.$emit('connected', this.hotConnection);
         this.hotConnection = {
           input: null,
           output: null,
@@ -105,6 +109,7 @@
         let self = this;
         this.connections.map((obj, index) => {
           if (obj.inputObj === input.$props.input) {
+            bus.$emit('disconnected', obj);
             self.connections.splice(index, 1);
             return true;
           }
@@ -121,6 +126,7 @@
       Node,
       DrawBox,
       NodePicker,
+      MessageBox
     },
     mounted() {
       bus.$on('inputClick', input => {
@@ -163,8 +169,8 @@
 
 <style>
   .drag-box {
-    /*position: absolute;*/
-    /*width: 100vh;*/
-    /*height: 100vh;*/
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
   }
 </style>

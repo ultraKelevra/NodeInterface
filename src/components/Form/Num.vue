@@ -1,14 +1,14 @@
 <template>
-  <div>
-    <label :for="id">{{ blueprint.label }}</label>
+  <div class="mono-field">
+    <label :for="id">{{ elem.label }}</label>
     <input type="number"
-           :id="compId">
+           :id="id">
   </div>
 </template>
 
 <script>
   export default {
-    props: ['blueprint', 'compId']
+    props: ['elem', 'id']
   }
 </script>
 

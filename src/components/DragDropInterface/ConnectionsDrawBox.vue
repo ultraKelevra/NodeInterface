@@ -1,8 +1,7 @@
 <template>
   <svg class="draw-box"
-       height="500vh"
-       width="500vh"
-       viewBox="1000,1000"
+       width="100%"
+       height="100%"
        @click.stop="$emit('drop')">
     <cubic-bezier v-for="(connection,index) in connections"
                   :start="connection.output"
@@ -27,11 +26,5 @@
 </script>
 
 <style>
-  .draw-box {
-    /*position: absolute;*/
-    /*top: 0;*/
-    /*left: 0;*/
-    width: 500vh;
-    height: 500vh;
-  }
+
 </style>
