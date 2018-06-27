@@ -47,6 +47,8 @@
       ,
       CalculateConnectionDrawPosition() {
         let boundRect = this.$el.getBoundingClientRect();
+        boundRect.x += window.scrollX;
+        boundRect.y += window.scrollY;
         this.dragPosition.x = boundRect.left + boundRect.width - 10.0;
         this.dragPosition.y = (boundRect.top + (boundRect.height / 2.0));
       }

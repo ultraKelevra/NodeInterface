@@ -1,13 +1,17 @@
 <template>
   <div class="drag-box"
        @mousemove="UpdateMousePosition">
-    <draw-box :connections="connections">
+    <draw-box :connections="connections"
+              @drop="Drop">
     </draw-box>
-    <node-picker></node-picker>
-    <node v-for="node in nodeTree"
+    <node v-for="node in nodes"
           :node="node"
-          :mousePosition="mousePosition">
+          :mousePosition="mousePosition"
+          :key="node.id">
     </node>
+    <node-picker></node-picker>
+    <message-box></message-box>
+    <input type="text" ssss>
   </div>
 </template>
 
@@ -17,6 +21,7 @@
   import Node from '../Node/Node.vue';
   import DrawBox from './ConnectionsDrawBox';
   import NodePicker from './NodePicker';
+  import MessageBox from './MessageBox/MessageBox';
 
   export default {
     data() {
@@ -37,7 +42,7 @@
       };
     },
     computed: {
-      ...mapGetters(['nodeTree']),
+      ...mapGetters(['nodes']),
     },
     methods: {
       UpdateMousePosition(event) {
@@ -91,6 +96,7 @@
         this.inPreview = false;
         this.draggingInput = false;
         this.draggingOutput = false;
+        bus.$emit('connected', this.hotConnection);
         this.hotConnection = {
           input: null,
           output: null,
@@ -103,13 +109,15 @@
         let self = this;
         this.connections.map((obj, index) => {
           if (obj.inputObj === input.$props.input) {
+            bus.$emit('disconnected', obj);
             self.connections.splice(index, 1);
             return true;
           }
         });
       },
       DeleteNode(node) {
-        this.connections.filter(connection=>{
+        this.connections = this.connections.filter(connection => {
+          return connection.inputObj.node !== node.$props.node && connection.outputObj.node !== node.$props.node;
         });
         this.$store.dispatch('deleteNode', node.$props.node);
       },
@@ -118,6 +126,7 @@
       Node,
       DrawBox,
       NodePicker,
+      MessageBox
     },
     mounted() {
       bus.$on('inputClick', input => {
@@ -160,8 +169,8 @@
 
 <style>
   .drag-box {
-    position: absolute;
-    width: 100vh;
+    position: fixed;
+    width: 100vw;
     height: 100vh;
   }
 </style>

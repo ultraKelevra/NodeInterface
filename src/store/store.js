@@ -1,12 +1,12 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 
-import graphState from './modules/graphState';
+import nodesGraphState from './modules/nodesGraphState/store';
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
   modules: {
-    graphState,
+    nodesGraphState,
   }
 });

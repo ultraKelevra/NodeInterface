@@ -32,7 +32,7 @@
     border-radius: 3px;
     font-weight: bold;
     margin: 3px;
-    transition: .2s;
+    transition: .1s;
     cursor: default;
     user-select: none;
     color: rgb(200, 200, 200);

@@ -9,23 +9,24 @@
       <div style="position: absolute; right: 0; top: 0;">
         <styl-button material="transparent"
                      @click.stop="unfolded=false">
-          <icon-close></icon-close>
+          <icon-close class="small"></icon-close>
         </styl-button>
       </div>
-      <styl-button v-for="(label,index) in nodeLabels"
-                   @click.stop="OnButtonClick()"
+      <styl-button v-for="(blueprint, index) in nodeBlueprints"
+                   @click.stop="OnButtonClick(index)"
                    :key="index">
-        {{ label }}
-        {{index}}
+        {{ blueprint.label }}
       </styl-button>
     </div>
   </div>
 </template>
 
 <script>
-  import StylButton from '../Button/StylButton';
-  import IconClose from '../Button/IconClose';
-  import IconBurger from '../Button/IconBurger';
+  import {bus} from '../../main';
+  import StylButton from '../Form/Btn';
+  import IconClose from '../Form/IconClose';
+  import IconBurger from '../Form/IconBurger';
+  import Spiner from '../Misc/Spiner';
 
 
   export default {
@@ -33,22 +34,48 @@
       return {
         nodeLabels: ['A', 'B', 'C'],
         unfolded: true,
-        node: {
-          label: 'A',
-          inputs: [{label: 'IA'}],
-          outputs: [{label: 'OA'}],
-        },
+        // nodeBlueprints: [],
+        nodeBlueprints: [
+          {
+            'label': 'Table',
+            'form': [
+              {
+                'type': 'TableVisual',
+                'label': ''
+              }
+            ],
+            'inputs': [{'label': 'TableIn'}],
+            'outputs': [],
+          }
+        ],
+        updated: false,
       }
     },
     methods: {
-      OnButtonClick() {
-        this.$store.dispatch('createNode', this.node);
+      OnButtonClick(index) {
+        this.$store.dispatch('createNode', this.nodeBlueprints[index]);
+        this.$http.post('/newnode/', {'code': index})
+          .then(response => {
+            bus.$emit('response',response);
+          });
+      },
+      GetBlueprints() {
+        this.$http.get('/blueprints/')
+          .then(response => response.json())
+          .then(data => {
+            this.nodeBlueprints = data;
+            this.updated = true;
+          });
       }
     },
     components: {
       StylButton,
       IconClose,
-      IconBurger
+      IconBurger,
+      Spiner
+    },
+    mounted() {
+      this.GetBlueprints();
     }
   }
 </script>

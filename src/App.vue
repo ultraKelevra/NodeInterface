@@ -6,12 +6,10 @@
 
 <script>
   import DragBox from './components/DragDropInterface/DragBox';
-  import NodePicker from './components/DragDropInterface/NodePicker';
 
   export default {
     components: {
-      DragBox,
-      NodePicker
+      DragBox
     }
   }
 </script>
@@ -19,6 +17,12 @@
 <style language="scss">
   @import './Style/transitions.scss';
   @import './Style/vars.scss';
+
+  #app {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+  }
 
   body {
     font-family: Calibri;
@@ -36,9 +40,25 @@
     user-select: none;
   }
 
+  .small span {
+    font-size: calc(8px + 1vmin);
+  }
+
   .icon {
-    width: 2vmin;
-    height: 2vmin;
+    width: calc(10px + 2vmin);
+    height: calc(10px + 2vmin);
+  }
+
+  .small .icon,
+  .small.icon {
+    width: calc(8px + 1vmin);
+    height: calc(8px + 1vmin);
+  }
+
+  .big .icon,
+  .big.icon {
+    width: calc(10px + 3vmin);
+    height: calc(10px + 3vmin);
   }
 
 </style>

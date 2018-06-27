@@ -1,19 +1,19 @@
 <template>
   <transition name="fade" appear>
     <div class="node"
+         :id="'node-'+node.id"
          :class="{dragged:dragged}"
          :style="{left: offset.x+'px', top: offset.y+'px'}">
       <div class="node-bar draggable-area"
            @click.stop="DragDrop">
         <span>{{ label }}</span>
-        <span>{{ dragged }}</span>
-        <styl-button material="transparent"
-                     @click.stop="Delete">
-          <icon-close></icon-close>
-        </styl-button>
+        <btn material="transparent"
+             @click.stop="Delete">
+          <icon-close class="small"></icon-close>
+        </btn>
       </div>
       <div class="node-body">
-        <div class="node-output-area">
+        <div v-if="node.outputs.length>0" class="node-output-area">
           <ul>
             <node-output v-for="output in node.outputs"
                          :output="output"
@@ -21,7 +21,13 @@
             </node-output>
           </ul>
         </div>
-        <div class="node-input-area">
+
+        <div v-if="node.form.elements.length>0" class="node-form-area">
+          <frm :form="node.form">
+          </frm>
+        </div>
+
+        <div v-if="node.inputs.length>0" class="node-input-area">
           <ul>
             <node-input v-for="input in node.inputs"
                         :input="input"
@@ -38,10 +44,10 @@
   import {bus} from '../../main';
   import NodeInput from './NodeInput';
   import NodeOutput from './NodeOutput';
-  import StylButton from '../Button/StylButton';
-  import StylForm from '../Form/StylForm';
+  import Btn from '../Form/Btn';
   import Spiner from '../Misc/Spiner';
-  import IconClose from '../Button/IconClose';
+  import IconClose from '../Form/IconClose';
+  import Frm from '../Form/Frm';
 
   export default {
     props: ['node', 'mousePosition'],
@@ -101,10 +107,10 @@
     components: {
       NodeInput,
       NodeOutput,
-      StylButton,
-      StylForm,
+      btn: Btn,
       Spiner,
-      IconClose
+      IconClose,
+      frm: Frm
     },
     mounted() {
       this.dragOffset.x = 15;
@@ -166,15 +172,4 @@
     text-align: left;
     padding: 5px 15px 5px 0;
   }
-
-  /*---------------------------------------------------------------------separar despues*/
-  input {
-    border: none;
-    border-radius: 3px;
-    color: rgb(50, 50, 50);
-    font-size: 15px;
-    padding: 2px 5px;
-    box-shadow: inset 1px 1px 2px rgba(0, 0, 0, .2);
-  }
-
 </style>
